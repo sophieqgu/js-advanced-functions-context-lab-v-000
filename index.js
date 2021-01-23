@@ -39,40 +39,34 @@ function createEmployeeRecords(employees) {
 
 
 function createTimeInEvent(employee, dateTime) {
-  const type = 'TimeIn';
-  const dateTimeArray = dateTime.split(' ');
-  const date = dateTimeArray[0];
-  const hour = parseInt(dateTimeArray[1]);
+  let [date, hour] = dateTime.split(' ');
   employee.timeInEvents.push({
-    type: type,
-    date: date,
-    hour: hour
+    type: "TimeIn",
+    hour: parseInt(hour, 10),
+    date
   });
-  return employee;
+  return this;
 }
 
 
 function createTimeOutEvent(employee, dateTime) {
-  const type = 'TimeOut';
-  const dateTimeArray = dateTime.split(' ');
-  const date = dateTimeArray[0];
-  const hour = parseInt(dateTimeArray[1]);
+  let [date, hour] = dateTime.split(' ');
   employee.timeOutEvents.push({
-    type: type,
-    date: date,
-    hour: hour
+    type: "TimeOut",
+    hour: parseInt(hour, 10),
+    date
   });
-  return employee;
+  return this;
 }
 
 
-function hoursWorkedOnDate(employee, dateWorked) {
-  const timeInRecord = employee.timeInEvents.find(function(timeInEvent){
+function hoursWorkedOnDate(dateWorked) {
+  const timeInRecord = this.timeInEvents.find(function(timeInEvent){
       return timeInEvent.date === dateWorked;
   })
   const hourIn = timeInRecord.hour;
 
-  const timeOutRecord = employee.timeOutEvents.find(function(timeOutEvent){
+  const timeOutRecord = this.timeOutEvents.find(function(timeOutEvent){
       return timeOutEvent.date === dateWorked;
   })
   const hourOut = timeOutRecord.hour;
@@ -82,15 +76,15 @@ function hoursWorkedOnDate(employee, dateWorked) {
 
 
 
-function wagesEarnedOnDate(employee, dateWorked) {
-  const hoursWorked = hoursWorkedOnDate(employee, dateWorked);
-  const wage = employee.payPerHour;
+function wagesEarnedOnDate(dateWorked) {
+  const hoursWorked = hoursWorkedOnDate.call(this, dateWorked);
+  const wage = this.payPerHour;
   return hoursWorked * wage;
 }
 
 
 
-function allWagesFor(employee) {
+function allWagesFor() {
   const dates = employee.timeInEvents.map(function(timeInEvent){
     return timeInEvent.date;
   })
