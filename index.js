@@ -38,7 +38,7 @@ function createEmployeeRecords(employees) {
 }
 
 
-function createTimeInEvent(employee, dateTime) {
+function createTimeInEvent(dateTime) {
   let [date, hour] = dateTime.split(' ');
   employee.timeInEvents.push({
     type: "TimeIn",
@@ -49,7 +49,7 @@ function createTimeInEvent(employee, dateTime) {
 }
 
 
-function createTimeOutEvent(employee, dateTime) {
+function createTimeOutEvent(dateTime) {
   let [date, hour] = dateTime.split(' ');
   employee.timeOutEvents.push({
     type: "TimeOut",
@@ -84,28 +84,22 @@ function wagesEarnedOnDate(dateWorked) {
 
 
 
-function allWagesFor(employee) {
-  const dates = employee.timeInEvents.map(function(timeInEvent){
+function allWagesFor() {
+  const dates = this.timeInEvents.map(function(timeInEvent){
     return timeInEvent.date;
   })
 
-  const wages = dates.map(function(date){
-    return wagesEarnedOnDate(employee, date);
-  })
+  const wages = dates.reduce(function(total, date){
+    return total + wagesEarnedOnDate.call(this, date);
+  }.bind(this), 0)
 
-  const totalWages = wages.reduce((total, element) => element + total, 0);
-
-  return totalWages;
+  return wages;
 }
 
 
 
 function calculatePayroll(employees) {
-  const wages = employees.map(function(employee) {
-    return allWagesFor(employee);
-  })
-
-  const totalWages = wages.reduce((total, element) => element + total, 0);
+  const employees.reduce((total, employee) => element + allWagesFor.call(employee), 0);
 
   return totalWages;
 }
